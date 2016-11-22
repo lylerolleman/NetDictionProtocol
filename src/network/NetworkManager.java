@@ -33,10 +33,12 @@ public class NetworkManager {
 	}
 	
 	public static void closeNetwork() {
-		listener.close();
-		for (NetDictionConnection con : connections) {
-			con.close();
+		if (listener != null) {
+			listener.close();
+			for (NetDictionConnection con : connections) {
+				con.close();
+			}
+			ExecutionManager.stopConsumer();
 		}
-		ExecutionManager.stopConsumer();
 	}
 }
