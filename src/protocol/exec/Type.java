@@ -34,8 +34,10 @@ public class Type implements NetDictionCommand {
 						pressKey(((int) c) - 32);
 					else
 						shiftPressKey((int) c);
-				else 
+				else {
 					System.err.println("Unrecognized character: " + c);
+					pressKey((int) c);
+				}
 			} catch (AWTException e) {
 				e.printStackTrace();
 			}

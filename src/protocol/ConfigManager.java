@@ -1,6 +1,7 @@
 package protocol;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.prefs.Preferences;
 
@@ -8,23 +9,24 @@ import java.util.prefs.Preferences;
  * Created by Lyle on 8/4/2016.
  */
 public class ConfigManager {
-    private static Integer default_port = 10125;
-    private static String media_path = "";
     private static Preferences prefs = Preferences.userRoot().node("protocol");
 
     private static final String EXE_PATH = "EXE_PATH";
+    private static final String MEDIA_PATH = "MEDIA_PATH";
+    private static final String DEFAULT_PORT = "DEFAULT_PORT";
+    private static final String ALIAS_MAP = "ALIAS_MAP";
 
     public static Integer getDefaultPort() {
-        return default_port;
+        return Integer.parseInt(prefs.get(DEFAULT_PORT, "10125"));
     }
     public static String getMediaPath() {
-        return media_path;
+        return prefs.get(MEDIA_PATH, "");
     }
     public static void setDefaultPort(Integer port) {
-        default_port = port;
+        prefs.put(DEFAULT_PORT, port.toString());
     }
     public static void setMediaPath(String path) {
-        media_path = path;
+        prefs.put(MEDIA_PATH, path);
     }
     public static HashMap<String, String> getExecutablePaths() {
         String data = prefs.get(EXE_PATH, "");
@@ -36,24 +38,43 @@ public class ConfigManager {
         setExecutablePaths(map);
     }
     public static void removeExecutablePath(String name) {
-        System.err.println("Removing: " + name);
         HashMap<String, String> map = getExecutablePaths();
         map.remove(name);
         setExecutablePaths(map);
     }
     private static void setExecutablePaths(HashMap<String, String> map) {
+        setMap(EXE_PATH, map);
+    }
+    public static HashMap<String, String> getAliases() {
+        String data = prefs.get(ALIAS_MAP, "");
+        return buildHashMap(data);
+    }
+    public static void addAlias(String name, String alias) {
+        HashMap<String, String> map = getAliases();
+        map.put(name, alias);
+        setAliases(map);
+    }
+    public static void removeAlias(String name) {
+        HashMap<String, String> map = getAliases();
+        map.remove(name);
+        setAliases(map);
+    }
+    private static void setAliases(HashMap<String, String> map) {
+        setMap(ALIAS_MAP, map);
+    }
+    private static void setMap(String key, HashMap<String, String> map) {
         if (map.size() == 0) {
-            prefs.remove(EXE_PATH);
-            prefs.put(EXE_PATH, "");
+            prefs.remove(key);
+            prefs.put(key, "");
             return;
         }
         Set<String> ks = map.keySet();
         String data = "";
-        for (String key : ks) {
-            data += "," + key + "::" + map.get(key);
+        for (String mapkey : ks) {
+            data += "," + mapkey + "::" + map.get(mapkey);
         }
-        prefs.remove(EXE_PATH);
-        prefs.put(EXE_PATH, data.substring(1));
+        prefs.remove(key);
+        prefs.put(key, data.substring(1));
     }
     private static HashMap<String, String> buildHashMap(String data) {
         HashMap<String, String> map = new HashMap<>();
