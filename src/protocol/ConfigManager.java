@@ -62,7 +62,7 @@ public class ConfigManager {
         String[] entries = data.split(",");
         for (String entry : entries) {
             String[] pair = entry.split("::");
-            map.put(pair[0], pair[1]);
+            map.put(pair[0].toLowerCase(), pair[1]);
         }
         return map;
     }

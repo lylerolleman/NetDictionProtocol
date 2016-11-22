@@ -39,6 +39,7 @@ public class NetworkManager {
 				con.close();
 			}
 			ExecutionManager.stopConsumer();
+			listener = null;
 		}
 	}
 }
